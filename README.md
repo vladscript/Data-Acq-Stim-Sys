@@ -11,7 +11,7 @@ Hardware:
 
 ### Stimuli TTL squared trains
 
-Sketches:
+Arduino Sketches:
 
 - **TTL_cont_Train**
 
@@ -22,7 +22,7 @@ Sketches:
 
 ### Text trigger to send TTL squared stimulus
 
-Sketches:
+Arduino Sketc:
 
 - **TTL_single_pulse**
 
