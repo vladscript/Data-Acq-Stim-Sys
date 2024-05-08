@@ -1,6 +1,6 @@
 % Call Directories where ALL scripts are
 %% ADDING ALLSCRIPTS
-fprintf('\n>>Loading Scripts for DASS: ')
+fprintf('\n>>Loading Scripts for D.A.S.S. : ')
 if exist('OpenFIeld_TurnsVideoRec.m','file')
     fprintf('already ')
 else

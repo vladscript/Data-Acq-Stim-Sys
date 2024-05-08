@@ -114,9 +114,11 @@ for t=1:numel(Intervals)        % TIME
     TimeWati=TimeWatiUpd;
     esperaEnd=toc(interRecordWait);
     if t<numel(Intervals)
-        InterWaitRecEnd=IntervalRec*60-esperaEnd-TimeWati(1);% seconds
-        fprintf('\n\n>Wait for following interval in %3.2f minutes\n Clean up in the meantime',InterWaitRecEnd/60);
-        pause(InterWaitRecEnd); % Process of recording
+        if ~isempty(TimeWati)
+            InterWaitRecEnd=IntervalRec*60-esperaEnd-TimeWati(1);% seconds
+            fprintf('\n\n>Wait for following interval in %3.2f minutes\n Clean up in the meantime',InterWaitRecEnd/60);
+            pause(InterWaitRecEnd); % Process of recording
+        end
     end
 end
 

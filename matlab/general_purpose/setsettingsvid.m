@@ -7,9 +7,15 @@
 %   Updated video object: vout
 %   Actual Frame Rate: expRate
 % 
-function [vout,expRate] = setsettingsvid(vin)
+function [vout,expRate] = setsettingsvid(vin,varargin)
 vout=vin;
-vout.ReturnedColorspace = "grayscale";
+
+if isempty(varargin)
+    vout.ReturnedColorspace = "grayscale";
+else
+    vout.ReturnedColorspace = "rgb";
+end
+
 triggerconfig(vout,'immediate');
 vout.LoggingMode='memory';
 src = getselectedsource(vout);
