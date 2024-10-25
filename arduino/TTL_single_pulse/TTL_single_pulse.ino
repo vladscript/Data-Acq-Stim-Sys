@@ -7,7 +7,7 @@ void setup() {
   // put your setup code here, to run once:
   pinMode(outputPin, OUTPUT);
   Serial.begin(9600);
-  Serial.println("<Enter X to send pulse">);
+  Serial.println("<Enter X to send pulse");
 }
 
 void loop() {
