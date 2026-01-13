@@ -1,7 +1,7 @@
 %%  AIMs recorder with 2cams
 %% 1: verify Camera are connected & are in the right view
 
-CamsNames={'OpenFieldcam';'CyLyndercam'}; % do not edit
+CamsNames={'Bottom-Cam';'Front-Cam'}; % do not edit
 CamSettings=camscheck(CamsNames);
 ViewOK=questdlg({'Cameras displayed correctly?'});
 stoprunnning=false;
@@ -21,10 +21,10 @@ end
 aux_OF=0; aux_CYL=0;
 for n=1:2
     switch CamSettings{n}.View
-        case 'OpenFieldcam'
+        case CamsNames{1}
             v_OF = videoinput(CamSettings{n}.Adaptor, CamSettings{n}.ID, CamSettings{n}.Resolution);
             aux_OF=1;
-        case 'CyLyndercam'
+        case CamsNames{2}
             v_CYL = videoinput(CamSettings{n}.Adaptor, CamSettings{n}.ID, CamSettings{n}.Resolution);
             aux_CYL=1;
         otherwise
@@ -45,7 +45,7 @@ end
 
 %% JUST IF CAMS R OK
 if ~stoprunnning
-    fprintf('GOOD!, \n>Testing cams:')
+    fprintf('\n>GOOD!, \n>Testing cams:')
     [v_CYL,expRate_Cyl] = setsettingsvid(v_CYL);    % logging/Color/Trigger
     [v_OF,expRate_OF] = setsettingsvid(v_OF);      % logging/Color/Trigger
     preview(v_CYL); preview(v_OF);
@@ -63,8 +63,8 @@ if ~stoprunnning
         for i=1:Nmice               % MICE
             % Files ID
             suficsID=[Mice_IDs{i},'_Min_',IntervalStr];
-            FNcyl=[DT,'_CYL_',suficsID,'.avi'];
-            FNof=[DT,'_OF_',suficsID,'.avi'];
+            FNcyl=[DT,'_FRONT_',suficsID,'.avi'];
+            FNof=[DT,'_BOTTOM_',suficsID,'.avi'];
             fullFilename_cyl = fullfile(SF, FNcyl);
             fullFilename_of = fullfile(SF, FNof);
             
@@ -119,7 +119,7 @@ if ~stoprunnning
             % Save Time Stamps
             indxof=strfind(FNof,'_OF_');
             NameMatDat=['/TimeStampsMATLAB_',FNof(1:indxof-1),'_',suficsID];
-            save([SF,NameMatDat,],'timeStamp_OF','timeStamp_CYL','t0_CYL','t0_OF');
+            save([SF,NameMatDat,],'timeStamp_BOTTOM','timeStamp_FRONT','t0_FRONT','t0_BOTTOM');
 
 %             % PREVIO
 %             fprintf('\n Recording %s:\n',FN)
@@ -158,7 +158,7 @@ if ~stoprunnning
     end
 
     %% Close Stuff
-    fprintf('\nClearing:')
+    fprintf('\n>Clearing:')
     closepreview(v_CYL);
     closepreview(v_OF);
     delete(v_CYL); delete(v_OF);

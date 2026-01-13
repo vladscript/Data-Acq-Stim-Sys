@@ -27,7 +27,7 @@ if isfield(A,'FrameRate')
     actualRate = str2double( frameRates{1} );
 else
     fprintf('\n [No Frame Rate in Fields, 30 fps assumed ]')
-    actualRate = 30; % MAYBE
+    actualRate = 60; % MAYBE
 end
 
 %% Testing to get Actual Frame Rate

@@ -22,8 +22,8 @@ fprintf('\n>Checking camera: .')
 % Create Figure
 
 % Create Video Object
-v = videoinput("winvideo", 1, "RGB32_320x240");
-% v = videoinput("winvideo", 2, "RGB32_640x480"); % More resolution
+% v = videoinput("winvideo", 1, "RGB32_320x240");
+v = videoinput("winvideo", 1, "RGB32_640x480"); % More resolution
 v.ReturnedColorspace = "grayscale";
 checkcam=true;
 while checkcam
