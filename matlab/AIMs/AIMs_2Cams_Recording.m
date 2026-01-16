@@ -18,21 +18,21 @@ end
 % preview(v1); preview(v2)
 % closepreview(v2)
 %% Assign videos objectos to variable names
-aux_OF=0; aux_CYL=0;
+aux_BOTTOM=0; aux_FRONT=0;
 for n=1:2
     switch CamSettings{n}.View
         case CamsNames{1}
-            v_OF = videoinput(CamSettings{n}.Adaptor, CamSettings{n}.ID, CamSettings{n}.Resolution);
-            aux_OF=1;
+            v_BOTTOM = videoinput(CamSettings{n}.Adaptor, CamSettings{n}.ID, CamSettings{n}.Resolution);
+            aux_BOTTOM=1;
         case CamsNames{2}
-            v_CYL = videoinput(CamSettings{n}.Adaptor, CamSettings{n}.ID, CamSettings{n}.Resolution);
-            aux_CYL=1;
+            v_FRONT = videoinput(CamSettings{n}.Adaptor, CamSettings{n}.ID, CamSettings{n}.Resolution);
+            aux_FRONT=1;
         otherwise
             stoprunnning=true;
             fprintf('\n!!!!!\nOther names were edited in variable CamsNames \n!!!!!!!\n')
     end
 end
-if aux_CYL+aux_OF~=2
+if aux_FRONT+aux_BOTTOM~=2
     stoprunnning=true;
     fprintf('\nRepeated or unselected camera\n')
 else
@@ -46,9 +46,9 @@ end
 %% JUST IF CAMS R OK
 if ~stoprunnning
     fprintf('\n>GOOD!, \n>Testing cams:')
-    [v_CYL,expRate_Cyl] = setsettingsvid(v_CYL);    % logging/Color/Trigger
-    [v_OF,expRate_OF] = setsettingsvid(v_OF);      % logging/Color/Trigger
-    preview(v_CYL); preview(v_OF);
+    [v_FRONT,expRate_FRONT] = setsettingsvid(v_FRONT);    % logging/Color/Trigger
+    [v_BOTTOM,expRate_BOTTOM] = setsettingsvid(v_BOTTOM);      % logging/Color/Trigger
+    preview(v_FRONT); preview(v_BOTTOM);
     fprintf('>[OK].\n.')
     %% MAIN CODE HERE ###########################################
     % File Name
@@ -65,24 +65,24 @@ if ~stoprunnning
             suficsID=[Mice_IDs{i},'_Min_',IntervalStr];
             FNcyl=[DT,'_FRONT_',suficsID,'.avi'];
             FNof=[DT,'_BOTTOM_',suficsID,'.avi'];
-            fullFilename_cyl = fullfile(SF, FNcyl);
-            fullFilename_of = fullfile(SF, FNof);
+            fullFilename_FRONT = fullfile(SF, FNcyl);
+            fullFilename_BOTTOM = fullfile(SF, FNof);
             
             % Create and configure the video writer
-            logfile_cyl = VideoWriter(fullFilename_cyl, "Motion JPEG AVI");
-            logfile_of = VideoWriter(fullFilename_of, "Motion JPEG AVI");
-            logfile_cyl.FrameRate=expRate_Cyl;
-            logfile_of.FrameRate=expRate_OF;
+            logfile_FRONT = VideoWriter(fullFilename_FRONT, "Motion JPEG AVI");
+            logfile_BOTTOM = VideoWriter(fullFilename_BOTTOM, "Motion JPEG AVI");
+            logfile_FRONT.FrameRate=expRate_FRONT;
+            logfile_BOTTOM.FrameRate=expRate_BOTTOM;
     %         logfile = VideoWriter(fullFilename, "Grayscale AVI");
             % Configure the device to log to disk using the video writer
-            % v_CYL.LoggingMode = "disk";
-            v_CYL.DiskLogger = logfile_cyl;
-            v_OF.DiskLogger = logfile_of;
+            % v_FRONT.LoggingMode = "disk";
+            v_FRONT.DiskLogger = logfile_FRONT;
+            v_BOTTOM.DiskLogger = logfile_BOTTOM;
 
-            %v_CYL.FramesPerTrigger = Inf;
+            %v_FRONT.FramesPerTrigger = Inf;
             
-            v_CYL.FramesPerTrigger = ceil(1.05*numSeconds*expRate_Cyl);
-            v_OF.FramesPerTrigger = ceil(1.05*numSeconds*expRate_OF);
+            v_FRONT.FramesPerTrigger = ceil(1.05*numSeconds*expRate_FRONT);
+            v_BOTTOM.FramesPerTrigger = ceil(1.05*numSeconds*expRate_BOTTOM);
 
             % WAIT inter-mice-placing times:
             if i>1 && t>1
@@ -97,37 +97,37 @@ if ~stoprunnning
             % R E C O R D I N G 
             fprintf('\n Recording min %1.1f / mouse: %i',Intervals(t),i);
             Trec0=tic;
-            start(v_CYL); Tvid11=toc(Trec0); start(v_OF); Tvid21=toc(Trec0);
-            trigger([v_OF,v_CYL]);
-            wait([v_CYL,v_OF],round(numSeconds*max([expRate_OF,expRate_Cyl])));
+            start(v_FRONT); Tvid11=toc(Trec0); start(v_BOTTOM); Tvid21=toc(Trec0);
+            trigger([v_BOTTOM,v_FRONT]);
+            wait([v_FRONT,v_BOTTOM],round(numSeconds*max([expRate_BOTTOM,expRate_FRONT])));
 
-            stop(v_CYL); Tvid12=toc(Trec0); stop(v_OF); Tvid22=toc(Trec0);
+            stop(v_FRONT); Tvid12=toc(Trec0); stop(v_BOTTOM); Tvid22=toc(Trec0);
             
             % Wait for all frames to be written to disk
-            while v_CYL.FramesAcquired ~= v_CYL.DiskLoggerFrameCount && v_OF.FramesAcquired ~= v_OF.DiskLoggerFrameCount
+            while v_FRONT.FramesAcquired ~= v_FRONT.DiskLoggerFrameCount && v_BOTTOM.FramesAcquired ~= v_BOTTOM.DiskLoggerFrameCount
                 pause(.1);
                 fprintf('.');
             end
             fprintf('\n Recorded.\n')
             
             % S Y n C H - intel
-            [~, timeStamp_OF] = getdata(v_OF);
-            [~, timeStamp_CYL] = getdata(v_CYL);
+            [~, timeStamp_BOTTOM] = getdata(v_BOTTOM);
+            [~, timeStamp_FRONT] = getdata(v_FRONT);
             
-            [~,t0_CYL]=min(abs(timeStamp_CYL-max([timeStamp_CYL(1),timeStamp_OF(1)])));
-            [~,t0_OF]=min(abs(timeStamp_OF-max([timeStamp_CYL(1),timeStamp_OF(1)])));
+            [~,t0_FRONT]=min(abs(timeStamp_FRONT-max([timeStamp_FRONT(1),timeStamp_BOTTOM(1)])));
+            [~,t0_BOTTOM]=min(abs(timeStamp_BOTTOM-max([timeStamp_FRONT(1),timeStamp_BOTTOM(1)])));
             % Save Time Stamps
-            indxof=strfind(FNof,'_OF_');
+            indxof=strfind(FNof,'_BOTTOM_');
             NameMatDat=['/TimeStampsMATLAB_',FNof(1:indxof-1),'_',suficsID];
             save([SF,NameMatDat,],'timeStamp_BOTTOM','timeStamp_FRONT','t0_FRONT','t0_BOTTOM');
 
 %             % PREVIO
 %             fprintf('\n Recording %s:\n',FN)
-%             start(v_CYL);
+%             start(v_FRONT);
 %             pause(numSeconds);              % time recording!!
-%             stop(v_CYL);
+%             stop(v_FRONT);
 %             % Wait for all frames to be written to disk
-%             while v_CYL.FramesAcquired ~= v_CYL.DiskLoggerFrameCount
+%             while v_FRONT.FramesAcquired ~= v_FRONT.DiskLoggerFrameCount
 %                 pause(.1);
 %             end
 %             fprintf('\n Recorded.\n')
@@ -159,10 +159,10 @@ if ~stoprunnning
 
     %% Close Stuff
     fprintf('\n>Clearing:')
-    closepreview(v_CYL);
-    closepreview(v_OF);
-    delete(v_CYL); delete(v_OF);
-    clear v_CYL v_OF
+    closepreview(v_FRONT);
+    closepreview(v_BOTTOM);
+    delete(v_FRONT); delete(v_BOTTOM);
+    clear v_FRONT v_BOTTOM
     fprintf('[COMPLETE]\n')
 else
     fprintf('Check stuff')
